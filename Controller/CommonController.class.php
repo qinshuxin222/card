@@ -1,39 +1,72 @@
 <?php
-namespace Api\Controller;
+namespace Card\Controller;
 use Think\Controller;
 class CommonController extends Controller {
-		 //得到会员的基本信息
-		 public function get_user_base_info($user_id){
-					$User=M('users')->where("user_id=".$user_id)->field('avatar_url,nickname,sex,autograph')->find();
-					if(!$User){
+		 //商品列表
+		 public function product_list($user_id,$card_id,$where='',$page=1,$pagesize=10){
+					$card_info=M("card")->where("id=$card_id")->find();
+					if(!$card_info){
 							$return_data = array(
 								'code'      =>  40001,
-								'msg'       =>  '没用这个用户'
+								'msg'       =>  '没有这个名片'
 							);
-							exit(json_encode($return_data));
+							return $return_data;
 					}
-					if(!$User['autograph']){
-						$User['autograph']='';
-					}
-					$User['count_article']=M('article')->where("user_id=".$user_id)->count();   //文章数
-					//$User['count_zan']=M('article_zan')->where(" user_id=".$user_id)->count();  //我点的，有错
-					
-					//计算文章点赞数
-					$subQuery1=M('article')->where(" user_id=".$user_id)->field('article_id')->buildsql();  //本人发的动态
-					$count_zan1=M('article_zan')->where(" type=1 and correlation_id in ($subQuery1)")->count();
-					
-					//计算评论和回复的点赞数
-					$subQuery2=M('article_comment')->where(" user_id=".$user_id)->field('comment_id')->buildsql();  //本人发布的评论和回复
-					$count_zan2=M('article_zan')->where(" type=2 and correlation_id in ($subQuery2)")->count();
-					$User['count_zan']=$count_zan1+$count_zan2;
-					
-					$User['count_click']=M('article')->where(" user_id=".$user_id)->sum('click');
-					$return_data = array(
-						'code'      =>  40000,
-						'msg'       =>  '成功',
-						'data'      =>  $User
-					);
+					$sql=" is_on_sale=1 ";
+					$sql.=" and  business_id=".session("business.id")." or worker_id=".$card_info['worker_id'];
+					$count=M('business_product')
+							->where($sql)
+							->count();
+							
 
+					$list=M('business_product')
+							->where($sql)
+							->order("id desc")
+							->limit($pagesize)
+							->page($page)
+							->select();
+					if(!$list){
+						 $return_data = array(
+								'code'      =>  40010,
+								'msg'       =>  '暂无数据'
+							);
+					}else{
+						$return_data = array(
+								'code'      =>  40000,
+								'msg'       =>  '成功',
+								'count'      =>  $count,
+								'data'      =>  $list
+						 );
+					}
+					return $return_data;
+		 }
+		 
+		  //名片分享
+		  public function share_card($user_id,$card_id){
+					$sql="card.id=$card_id";
+					$card_info=M("card")->alias('card')
+							->join("wlyy_business_worker bw on bw.id=card.worker_id")
+							->join("wlyy_business b on b.id=bw.business_id")
+							->field("b.business_name,bw.name")
+							->where($sql)
+							->find();
+					if(!$card_info){
+							$return_data = array(
+								'code'      =>  40001,
+								'msg'       =>  '没有这个名片'
+							);
+							return $return_data;
+					}
+					
+					$options['title']='Hello~我是'.$card_inf['business_name'].'的'.$card_inf['name'].',请惠存我的名片';
+					$options['path']='/page/index/index';
+					$options['imageUrl']='http://card.zhiliaonet.cn';
+					
+					$return_data = array(
+							'code'      =>  40000,
+							'msg'       =>  '成功',
+							'data'      =>  $options
+					 );
 					return $return_data;
 		 }
 		 
@@ -54,7 +87,7 @@ class CommonController extends Controller {
 								'msg'       =>  '暂无数据',
 								'data'      =>  ''
 							);
-						 return $list;
+						 return $return_data;
 					}
 					$film_type=array('mp4','mpg');
 					foreach($list as &$row){

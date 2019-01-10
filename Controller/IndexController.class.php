@@ -68,7 +68,14 @@ class IndexController extends BaseController {
 								'msg'       =>  '暂无数据'
 							);
 					}else{
-						//1访问记录
+						$common = new CommonController();	
+						//1名片分享
+						$share_card=$common->share_card($user_id,$card_id);
+						$info['share_card']=$share_card['data'];	
+						//2 产品列表
+						$product_list=$common->product_list($user_id,$card_id,'',1,10);
+						$info['product_list']=$product_list['data'];
+						//3访问记录
 						$info['visit_list']=M("card_visit")->alias("cv")
 							->join("wlyy_users u on u.user_id=cv.user_id")
 							->where("cv.card_id=$card_id")
@@ -76,6 +83,21 @@ class IndexController extends BaseController {
 							->field("u.*")
 							->select();
 							
+						//4个人简介	
+						$voice=M("business_worker_data")->where("type=2 and worker_id=".$info['id'])->find();
+						$tag_list=M("business_worker_data")->where("type=2 and worker_id=".$info['id'])->order(" id desc")->select();
+						$info['summary']['voice']=$voice['content'];  //声音
+						$info['summary']['introduce']=$info['introduce'];
+						$info['summary']['tag_list']=$tag_list;
+						
+						//5我的视频
+						$video=M("business_worker_data")->where("type=3 and worker_id=".$info['id'])->find();
+						$info['video']=$video['content'];
+						
+						//6我的图片
+						$image_list=M("business_worker_data")->where("type=1 and worker_id=".$info['id'])->order(" id desc")->select();
+						$info['image_list']=$image_list;
+						
 						$return_data = array(
 								'code'      =>  40000,
 								'msg'       =>  '成功',
