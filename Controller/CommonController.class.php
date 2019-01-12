@@ -71,7 +71,7 @@ class CommonController extends Controller {
 		 }
 		 
 		//文章列表 
-		public function article_list($longitude,$latitude,$range=3000,$page=1,$pagesize=10,$user_id=0){
+		public function article_list($user_id=0,$page=1,$pagesize=10){
 					$sql=" is_open=1 ";
 					
 					$count=M('article')->where($sql)->count();
@@ -224,7 +224,7 @@ class CommonController extends Controller {
 					return $return_data;
 		 }
 		 //文章详情
-		 public function article_view($article_id,$user_id=0,$longitude=0,$latitude=0){
+		 public function article_view($user_id=0,$article_id){
 					$sql=" 1=1 and article_id=$article_id";
 					$info=M('article')->where($sql)->find();
 					if(!$info){
