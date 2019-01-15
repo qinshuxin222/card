@@ -50,30 +50,13 @@ class CommonController extends Controller {
 				}
 				$nickname=M('users')->where("user_id=$user_id")->getField('nickname');
 				if($cat_id==1){  
-					 $remark=$nickname."正在查看".$array['product_name'].",尽快把握商机";
-				}else if($cat_id==2){
-					 $remark=$nickname."查看了你公司的官网,看来Ta对公司感兴趣";
-				}else if($cat_id==3){
-					 $remark=$nickname."复制了你的微信，留意微信新朋友消息";
-				}else if($cat_id==4){
-					 $remark=$nickname."转发了你的名片，你的人脉圈正在裂变";
+						 $product_name=$array['product_name'];
+						 $remark=get_card_log_title($cat_id,$nickname,$product_name);
 				}else if($cat_id==5){
-					 $count=M("card_log")->where("user_id=$user_id and worker_id=$worker_id")->count();
-					 $remark=$nickname."查看你的名片第".$count."次,成交在望";
-				}else if($cat_id==6){
-					 $remark=$nickname."查看了你的企业动态";
-				}else if($cat_id==7){
-					 $remark=$nickname."向你咨询";
-				}else if($cat_id==8){
-					 $remark=$nickname."保存了你的电话，可以考虑拜访";
-				}else if($cat_id==9){
-					 $remark=$nickname."觉得你非常靠谱";
-				}else if($cat_id==10){
-					 $remark=$nickname."拨打你的手机";
-				}else if($cat_id==11){
-					 $remark=$nickname."耐心听完了你的语音介绍，快联系Ta吧";
-				}else if($cat_id==12){
-					 $remark=$nickname."复制了你的邮箱";
+						 $count=M("card_log")->where("user_id=$user_id and worker_id=$worker_id")->count();
+						 $remark=get_card_log_title($cat_id,$nickname,'',$count);
+				}else{
+						 $remark=get_card_log_title($cat_id,$nickname);
 				}
 				$data['cat_id']=$cat_id;
 				$data['add_time']=time();
@@ -83,14 +66,14 @@ class CommonController extends Controller {
 				$res=M('card_log')->add($data);
 				if($res){
 						$work = new \Asset\Controller\WorkController();
-						$array['touser']='';
-						$array['toparty']='2';
-						$array['totag']='';
-						$array['msgtype']='text';
-						$array['agentid']='1000003';
+						$array2['touser']='';
+						$array2['toparty']='2';
+						$array2['totag']='';
+						$array2['msgtype']='text';
+						$array2['agentid']='1000003';
 						
-						$array['content']=$remark;
-						$result = $work->send($array);
+						$array2['content']=$remark;
+						$result = $work->send($array2);
 			
 						$return_data = array(
 							'code'      =>  40000,

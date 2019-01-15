@@ -1,4 +1,33 @@
 <?php
+function get_card_log_title($cat_id,$nickname,$product_name='',$count=0) {
+				if($cat_id==1){  
+					 $remark=$nickname."正在查看".$product_name.",尽快把握商机";
+				}else if($cat_id==2){
+					 $remark=$nickname."查看了你公司的官网,看来Ta对公司感兴趣";
+				}else if($cat_id==3){
+					 $remark=$nickname."复制了你的微信，留意微信新朋友消息";
+				}else if($cat_id==4){
+					 $remark=$nickname."转发了你的名片，你的人脉圈正在裂变";
+				}else if($cat_id==5){
+					 $remark=$nickname."查看你的名片第".$count."次,成交在望";
+				}else if($cat_id==6){
+					 $remark=$nickname."查看了你的企业动态";
+				}else if($cat_id==7){
+					 $remark=$nickname."向你咨询";
+				}else if($cat_id==8){
+					 $remark=$nickname."保存了你的电话，可以考虑拜访";
+				}else if($cat_id==9){
+					 $remark=$nickname."觉得你非常靠谱";
+				}else if($cat_id==10){
+					 $remark=$nickname."拨打你的手机";
+				}else if($cat_id==11){
+					 $remark=$nickname."耐心听完了你的语音介绍，快联系Ta吧";
+				}else if($cat_id==12){
+					 $remark=$nickname."复制了你的邮箱";
+				}
+				
+				return $remark;
+}
 function time_tran($the_time) {
 	date_default_timezone_set("Asia/Shanghai");   //设置时区
     $now_time = date("Y-m-d H:i:s", time());  

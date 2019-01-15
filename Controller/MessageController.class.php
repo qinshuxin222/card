@@ -71,7 +71,17 @@ class MessageController extends BaseController {
 		public function message_add($array){
 					$from_user_id=$this->user_id;
 					$to_user_id=$this->worker_id;
-					
+					if($array['message_type']==5 or $array['message_type']==6){
+							if($array['message_type']==5){
+								$cat_id=3;
+							}else if($array['message_type']==6){
+								$cat_id=8;
+							}
+							$nickname=M('users')->where("user_id=$from_user_id")->getField('nickname');
+							$array['content']=get_card_log_title($cat_id,$nickname);
+					}else if($array['message_type']!=1){
+							$array['content']=M("business_message_type")->where("id=".$array['message_type'])->getField('name');
+					}
 					$data['from_user_id']=$from_user_id;
 					$data['to_user_id']=$to_user_id;
 					$data['message_type']=$array['message_type'];
