@@ -59,10 +59,10 @@ class MessageController extends BaseController {
 							'msg'       =>  '成功',
 						);
 				}else{
-					$return_data = array(
-							'code'      =>  40010,
-							'msg'       =>  '失败',
-					);
+						$return_data = array(
+								'code'      =>  40010,
+								'msg'       =>  '失败',
+						);
 				}
 				exit(json_encode($return_data));
 		 }
@@ -80,6 +80,16 @@ class MessageController extends BaseController {
 					$data['type']=1;  			//1发送方为会员表 2发送方为员工表
 					$res=M("business_message")->add($data);
 					if($res){
+							$work = new \Asset\Controller\WorkController();
+							$array['touser']='';
+							$array['toparty']='2';
+							$array['totag']='';
+							$array['msgtype']='text';
+							$array['agentid']='1000003';
+							
+							$array['content']=$array['content'];
+							$result = $work->send($array);
+						
 							$return_data = array(
 									'code'      =>  40000,
 									'msg'       =>  '成功',

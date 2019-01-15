@@ -15,6 +15,7 @@ class WebsiteController extends BaseController {
 						exit(json_encode($return_data));
 				}
 				$this->user_id=$card_info['user_id'];
+				$this->user=M("users")->where("user_id=".$this->user_id)->find();
 				$this->card_id=$card_id;
 				$this->worker_id=$card_info['worker_id'];
 				$page=I("param.page",1,intval);
@@ -38,8 +39,16 @@ class WebsiteController extends BaseController {
 			//联系我们 5
 			$info['contact']==M("business_website_contact")->where("business_id=".$business_id)->order(" sort_order desc")->select();
 			
-			$sms = new \Asset\Controller\WorkController();
-			$result = $sms->send($yz_info['patient_phone'],1,$tempArr);
+			$work = new \Asset\Controller\WorkController();
+			$array['touser']='';
+			$array['toparty']='2';
+			$array['totag']='';
+			$array['msgtype']='text';
+			$array['agentid']='1000003';
+			
+			$user=$this->user;
+			$array['content']=$user['nickname'].'查看了你的官网';
+			$result = $work->send($array);
 			$return_data = array(
 					'code'      =>  40000,
 					'msg'       =>  '成功',
