@@ -82,8 +82,8 @@ public function data_uri($contents, $mime)
 		}
 	}
 	public function getPhoneNumber(){  
-					$APPID = session("company.appid");  
-					$AppSecret = session("company.appsecret");
+					$APPID = session("business.appid");  
+					$AppSecret = session("business.appsecret");
 					
 					$session_key = I('param.session_key');  
 					   

@@ -61,9 +61,6 @@ function get_extension($file){
 	return end(explode('.', $file)); 
 }
 
-
-
-
 /**
      * Curl Post数据
      * @param string $url 接收数据的api
@@ -92,4 +89,11 @@ function get_extension($file){
     }
 
 
-
+  /**
+     * 请求过程中因为编码原因+号变成了空格
+     * 需要用下面的方法转换回来
+     */
+    function define_str_replace($data){
+        return str_replace(' ','+',$data);
+    }
+	
